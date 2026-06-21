@@ -11,7 +11,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Carbon Compass — Track Your Carbon Footprint",
+  title: "CarbonIQ — Track & Reduce Your Carbon Footprint",
   description:
     "Measure your environmental impact, discover what's driving emissions, and receive personalized actions to reduce your carbon footprint every day.",
   keywords: ["carbon footprint", "sustainability", "environment", "emissions tracker", "climate action"],
@@ -25,9 +25,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} dark`} data-scroll-behavior="smooth">
       <body className="min-h-screen bg-bg-primary text-text-primary font-sans antialiased">
+        {/* Skip to main content link for keyboard / screen reader users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-green-primary focus:text-bg-primary focus:rounded-lg focus:text-sm focus:font-semibold"
+        >
+          Skip to main content
+        </a>
         <CarbonProvider>
           <Navigation />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" role="main" className="flex-1">{children}</main>
         </CarbonProvider>
       </body>
     </html>

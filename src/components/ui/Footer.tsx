@@ -9,13 +9,13 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border mt-20">
+    <footer className="border-t border-border mt-20" role="contentinfo" aria-label="Site footer">
       <div className="container-page py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="md:col-span-2">
-            <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-primary to-emerald flex items-center justify-center">
+            <Link href="/" className="flex items-center gap-2 mb-4" aria-label="CarbonIQ Home">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-primary to-emerald flex items-center justify-center" aria-hidden="true">
                 <Leaf className="w-4 h-4 text-bg-primary" />
               </div>
               <span className="text-lg font-bold text-text-primary">
@@ -29,7 +29,7 @@ export default function Footer() {
           </div>
 
           {/* Navigation */}
-          <div>
+          <nav aria-label="Footer platform links">
             <h4 className="text-sm font-semibold text-text-primary mb-4">Platform</h4>
             <ul className="space-y-2">
               {['Assessment', 'Dashboard', 'AI Coach', 'Progress'].map((item) => (
@@ -43,7 +43,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Resources */}
           <div>
@@ -67,11 +67,15 @@ export default function Footer() {
           </p>
           <div className="flex items-center gap-4">
             <span className="text-xs text-text-muted flex items-center gap-1">
-              Made with <Heart className="w-3 h-3 text-rose" /> for the planet
+              Made with <Heart className="w-3 h-3 text-rose" aria-hidden="true" /> <span className="sr-only">love</span> for the planet
             </span>
             <div className="flex items-center gap-3">
-              <ExternalLink className="w-4 h-4 text-text-muted hover:text-text-secondary transition-colors cursor-pointer" />
-              <Globe className="w-4 h-4 text-text-muted hover:text-text-secondary transition-colors cursor-pointer" />
+              <a href="#" aria-label="Share externally" className="text-text-muted hover:text-text-secondary transition-colors">
+                <ExternalLink className="w-4 h-4 cursor-pointer" aria-hidden="true" />
+              </a>
+              <a href="#" aria-label="Visit our website" className="text-text-muted hover:text-text-secondary transition-colors">
+                <Globe className="w-4 h-4 cursor-pointer" aria-hidden="true" />
+              </a>
             </div>
           </div>
         </div>

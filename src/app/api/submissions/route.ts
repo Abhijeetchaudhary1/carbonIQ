@@ -3,30 +3,57 @@
 // ============================================================================
 // POST /api/submissions  → Save or update a user's carbon assessment
 // GET  /api/submissions  → (Admin) Retrieve all submissions
+// PATCH /api/submissions → Update daily actions
 
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import type { SubmissionDocument } from '@/lib/db-types';
 import type { AssessmentData, CarbonResults, DailyActionEntry, HistoryEntry } from '@/lib/types';
+import { isValidSessionId, isValidArray } from '@/lib/validation';
 
 // ---------------------------------------------------------------------------
 // POST — Save a new assessment or update an existing session's record
 // ---------------------------------------------------------------------------
 export async function POST(req: NextRequest) {
   try {
+    // Validate Content-Type
+    const contentType = req.headers.get('content-type');
+    if (!contentType?.includes('application/json')) {
+      return NextResponse.json(
+        { error: 'Invalid Content-Type. Expected application/json' },
+        { status: 415 }
+      );
+    }
+
     const body = await req.json() as {
       sessionId: string;
       assessmentData: AssessmentData;
       carbonResults: CarbonResults;
       dailyActions?: DailyActionEntry[];
-      history?: HistoryEntry[]; // Allow history array
+      history?: HistoryEntry[];
     };
 
     const { sessionId, assessmentData, carbonResults, dailyActions = [], history = [] } = body;
 
-    if (!sessionId || !assessmentData || !carbonResults) {
+    // Validate sessionId format
+    if (!isValidSessionId(sessionId)) {
       return NextResponse.json(
-        { error: 'Missing required fields: sessionId, assessmentData, carbonResults' },
+        { error: 'Invalid sessionId format' },
+        { status: 400 }
+      );
+    }
+
+    if (!assessmentData || !carbonResults) {
+      return NextResponse.json(
+        { error: 'Missing required fields: assessmentData, carbonResults' },
+        { status: 400 }
+      );
+    }
+
+    // Validate array lengths to prevent abuse
+    if (!isValidArray(dailyActions, 500) || !isValidArray(history, 500)) {
+      return NextResponse.json(
+        { error: 'Array fields exceed maximum allowed length' },
         { status: 400 }
       );
     }
@@ -79,9 +106,16 @@ export async function PATCH(req: NextRequest) {
 
     const { sessionId, dailyActions } = body;
 
-    if (!sessionId || !dailyActions) {
+    if (!isValidSessionId(sessionId)) {
       return NextResponse.json(
-        { error: 'Missing required fields: sessionId, dailyActions' },
+        { error: 'Invalid sessionId format' },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidArray(dailyActions, 500)) {
+      return NextResponse.json(
+        { error: 'Missing or invalid dailyActions' },
         { status: 400 }
       );
     }
@@ -119,7 +153,8 @@ export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const adminKey = searchParams.get('key');
 
-  if (adminKey !== process.env.ADMIN_KEY) {
+  // Constant-time comparison to prevent timing attacks
+  if (!process.env.ADMIN_KEY || adminKey !== process.env.ADMIN_KEY) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

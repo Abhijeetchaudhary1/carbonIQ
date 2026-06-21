@@ -18,7 +18,7 @@ const config: Config = {
         "border-hover": "#2a2a2a",
         "text-primary": "#ffffff",
         "text-secondary": "#a3a3a3",
-        "text-muted": "#737373",
+        "text-muted": "#8f8f8f",
         "green-primary": "#34D399",
         emerald: "#10B981",
         ocean: "#38BDF8",

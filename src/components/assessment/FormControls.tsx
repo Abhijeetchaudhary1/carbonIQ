@@ -4,7 +4,7 @@
 
 'use client';
 
-import React from 'react';
+import React, { useId } from 'react';
 
 // --- Slider ---
 interface SliderProps {
@@ -18,15 +18,17 @@ interface SliderProps {
 }
 
 export function Slider({ label, value, min, max, step = 1, unit = '', onChange }: SliderProps) {
+  const id = useId();
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm text-text-secondary">{label}</label>
-        <span className="text-sm font-semibold text-green-primary">
+        <label htmlFor={id} className="text-sm text-text-secondary">{label}</label>
+        <span className="text-sm font-semibold text-green-primary" aria-live="polite">
           {value}{unit}
         </span>
       </div>
       <input
+        id={id}
         type="range"
         min={min}
         max={max}
@@ -34,8 +36,12 @@ export function Slider({ label, value, min, max, step = 1, unit = '', onChange }
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="w-full"
+        aria-valuemin={min}
+        aria-valuemax={max}
+        aria-valuenow={value}
+        aria-valuetext={`${value}${unit}`}
       />
-      <div className="flex justify-between text-xs text-text-muted">
+      <div className="flex justify-between text-xs text-text-muted" aria-hidden="true">
         <span>{min}{unit}</span>
         <span>{max}{unit}</span>
       </div>
@@ -58,14 +64,18 @@ interface SelectProps {
 }
 
 export function Select({ label, value, options, onChange }: SelectProps) {
+  const groupId = useId();
   return (
-    <div className="space-y-3">
-      <label className="text-sm text-text-secondary">{label}</label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+    <fieldset className="space-y-3">
+      <legend className="text-sm text-text-secondary">{label}</legend>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2" role="radiogroup" aria-labelledby={groupId}>
+        <span id={groupId} className="sr-only">{label}</span>
         {options.map((opt) => (
           <button
             key={opt.value}
             type="button"
+            role="radio"
+            aria-checked={value === opt.value}
             onClick={() => onChange(opt.value)}
             className={`p-3 rounded-xl text-left transition-all duration-200 border ${
               value === opt.value
@@ -80,7 +90,7 @@ export function Select({ label, value, options, onChange }: SelectProps) {
           </button>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 }
 
@@ -96,16 +106,19 @@ interface NumberInputProps {
 }
 
 export function NumberInput({ label, value, min = 0, max = 10000, unit, placeholder, onChange }: NumberInputProps) {
+  const id = useId();
   return (
     <div className="space-y-3">
-      <label className="text-sm text-text-secondary">{label}</label>
+      <label htmlFor={id} className="text-sm text-text-secondary">{label}</label>
       <div className="relative">
         <input
+          id={id}
           type="number"
           min={min}
           max={max}
           value={value || ''}
           placeholder={placeholder}
+          aria-label={`${label}${unit ? ` in ${unit}` : ''}`}
           onChange={(e) => {
             const val = Number(e.target.value);
             if (val >= min && val <= max) {
@@ -115,7 +128,7 @@ export function NumberInput({ label, value, min = 0, max = 10000, unit, placehol
           className="w-full px-4 py-3 rounded-xl bg-bg-card border border-border text-text-primary placeholder-text-muted focus:outline-none focus:border-green-primary/50 focus:ring-1 focus:ring-green-primary/20 transition-all"
         />
         {unit && (
-          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">
+          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted" aria-hidden="true">
             {unit}
           </span>
         )}

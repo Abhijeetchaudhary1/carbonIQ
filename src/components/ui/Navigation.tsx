@@ -16,11 +16,11 @@ export default function Navigation() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 glass-strong">
+    <nav className="fixed top-0 left-0 right-0 z-50 glass-strong" role="navigation" aria-label="Main navigation">
       <div className="container-page flex items-center justify-between h-16">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-primary to-emerald flex items-center justify-center">
+        <Link href="/" className="flex items-center gap-2 group" aria-label="CarbonIQ Home">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-green-primary to-emerald flex items-center justify-center" aria-hidden="true">
             <Leaf className="w-4 h-4 text-bg-primary" />
           </div>
           <span className="text-lg font-bold text-text-primary">
@@ -29,13 +29,15 @@ export default function Navigation() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden md:flex items-center gap-1" role="menubar">
           {NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
                 key={item.href}
                 href={item.href}
+                role="menuitem"
+                aria-current={isActive ? 'page' : undefined}
                 className={`relative px-4 py-2 text-sm rounded-lg transition-colors duration-200 ${
                   isActive
                     ? 'text-green-primary'
@@ -59,7 +61,9 @@ export default function Navigation() {
         <button
           className="md:hidden p-2 text-text-secondary hover:text-text-primary transition-colors"
           onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+          aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+          aria-expanded={mobileOpen}
+          aria-controls="mobile-nav-menu"
         >
           {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -69,6 +73,8 @@ export default function Navigation() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
+            id="mobile-nav-menu"
+            role="menu"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
@@ -81,6 +87,8 @@ export default function Navigation() {
                   <Link
                     key={item.href}
                     href={item.href}
+                    role="menuitem"
+                    aria-current={isActive ? 'page' : undefined}
                     onClick={() => setMobileOpen(false)}
                     className={`block px-4 py-3 rounded-lg text-sm transition-colors duration-200 ${
                       isActive
