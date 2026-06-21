@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getCollection } from '@/lib/mongodb';
 import type { SubmissionDocument } from '@/lib/db-types';
-import type { AssessmentData, CarbonResults, DailyActionEntry } from '@/lib/types';
+import type { AssessmentData, CarbonResults, DailyActionEntry, HistoryEntry } from '@/lib/types';
 
 // ---------------------------------------------------------------------------
 // POST — Save a new assessment or update an existing session's record
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
       assessmentData: AssessmentData;
       carbonResults: CarbonResults;
       dailyActions?: DailyActionEntry[];
-      history?: any[]; // Allow history array
+      history?: HistoryEntry[]; // Allow history array
     };
 
     const { sessionId, assessmentData, carbonResults, dailyActions = [], history = [] } = body;

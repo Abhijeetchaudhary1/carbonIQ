@@ -124,8 +124,8 @@ export default function EarthVisualization() {
   const totalRotateX = rotation.x;
 
   // Floating bob offset
-  const bobY = Math.sin(autoAngle.current * 0.05) * 6;
-  const bobX = Math.cos(autoAngle.current * 0.03) * 3;
+  const bobY = Math.sin(autoRotation * 0.05) * 6;
+  const bobX = Math.cos(autoRotation * 0.03) * 3;
 
   return (
     <div

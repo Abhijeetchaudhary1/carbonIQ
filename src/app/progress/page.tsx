@@ -9,10 +9,10 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import {
   TrendingDown, Calendar, Award, Target,
-  ChevronDown, ArrowRight, BarChart3
+  ArrowRight, BarChart3
 } from 'lucide-react';
 import {
-  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  XAxis, YAxis, Tooltip, ResponsiveContainer,
   CartesianGrid, AreaChart, Area
 } from 'recharts';
 import Link from 'next/link';
@@ -51,6 +51,7 @@ export default function ProgressPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

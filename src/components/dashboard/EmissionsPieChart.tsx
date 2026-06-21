@@ -38,7 +38,10 @@ function CustomTooltip({ active, payload }: { active?: boolean; payload?: Toolti
 
 export default function EmissionsPieChart({ categories }: Props) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true); 
+  }, []);
 
   return (
     <div className="flex flex-col items-center">

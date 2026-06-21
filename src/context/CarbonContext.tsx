@@ -5,7 +5,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import type { CarbonState, CarbonAction, AssessmentData, CarbonResults } from '@/lib/types';
+import type { CarbonState, CarbonAction, AssessmentData } from '@/lib/types';
 import { saveState, loadState } from '@/lib/storage';
 import { calculateCarbonFootprint } from '@/lib/carbon-engine';
 import { calculateActionSavings, getTodayString } from '@/lib/actions';
@@ -177,12 +177,12 @@ export function CarbonProvider({ children }: { children: React.ReactNode }) {
   const [state, dispatch] = useReducer(carbonReducer, initialState);
   const [hydrated, setHydrated] = React.useState(false);
 
-  // Hydrate from localStorage on mount
   useEffect(() => {
     const persisted = loadState();
     if (persisted) {
       dispatch({ type: 'LOAD_STATE', payload: persisted });
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setHydrated(true);
   }, []);
 

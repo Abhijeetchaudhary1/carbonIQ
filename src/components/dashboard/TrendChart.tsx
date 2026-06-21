@@ -34,7 +34,10 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 
 export default function TrendChart({ history }: Props) {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => { 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true); 
+  }, []);
 
   const data = history.slice(-14).map((entry) => ({
     date: new Date(entry.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
