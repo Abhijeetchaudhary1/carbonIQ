@@ -34,11 +34,27 @@ function carbonReducer(state: CarbonState, action: CarbonAction): CarbonState {
   switch (action.type) {
     case 'SET_ASSESSMENT': {
       const results = calculateCarbonFootprint(action.payload);
+      
+      // Generate demo history for last 14 days to populate graphs
+      const demoHistory = Array.from({ length: 14 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (13 - i));
+        const dailyCO2 = results.dailyCO2;
+        const savings = Math.random() * 5 + 2;
+        return {
+          date: date.toISOString().split('T')[0],
+          totalCO2: dailyCO2,
+          actionsSavings: Math.round(savings * 100) / 100,
+          netCO2: Math.round((dailyCO2 - savings) * 100) / 100,
+        };
+      });
+
       return {
         ...state,
         assessmentData: action.payload,
         carbonResults: results,
         hasCompletedAssessment: true,
+        history: demoHistory,
       };
     }
     case 'SET_RESULTS':

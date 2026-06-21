@@ -4,7 +4,7 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Activity, TrendingDown, Flame, Leaf, ArrowRight } from 'lucide-react';
@@ -21,16 +21,45 @@ import { generateInsights } from '@/lib/insights';
 import Footer from '@/components/ui/Footer';
 
 export default function DashboardPage() {
-  const { state } = useCarbonContext();
+  const { state, dispatch } = useCarbonContext();
   const router = useRouter();
+  const [isFetching, setIsFetching] = React.useState(false);
 
   useEffect(() => {
-    if (!state.hasCompletedAssessment) {
-      router.push('/assessment');
-    }
-  }, [state.hasCompletedAssessment, router]);
+    const fetchLatest = async () => {
+      if (state.hasCompletedAssessment || isFetching) return;
+      
+      setIsFetching(true);
+      try {
+        const res = await fetch('/api/submissions/latest');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.submission) {
+            // Reconstruct the full state from the submission document
+            const loadedState = {
+              assessmentData: data.submission.assessmentData,
+              carbonResults: data.submission.carbonResults,
+              dailyActions: data.submission.dailyActions || [],
+              history: data.submission.history || [],
+              hasCompletedAssessment: true
+            };
+            dispatch({ type: 'LOAD_STATE', payload: loadedState });
+            setIsFetching(false);
+            return; // Stay on dashboard
+          }
+        }
+        // If fetch fails or no data, redirect to assessment
+        router.push('/assessment');
+      } catch (err) {
+        console.error("Failed to fetch latest submission", err);
+        router.push('/assessment');
+      }
+    };
 
-  if (!state.carbonResults) {
+    fetchLatest();
+  }, [state.hasCompletedAssessment, router, dispatch, isFetching]);
+
+  if (!state.carbonResults || isFetching) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
